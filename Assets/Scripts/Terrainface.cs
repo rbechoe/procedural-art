@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Terrainface
+public class TerrainFace
 {
     private Mesh mesh;
 
@@ -12,11 +12,14 @@ public class Terrainface
     private Vector3 axisA;
     private Vector3 axisB;
 
-    public Terrainface(Mesh mesh, int resolution, Vector3 localUp)
+    private ShapeGenerator shapeGenerator;
+
+    public TerrainFace(ShapeGenerator shapeGenerator, Mesh mesh, int resolution, Vector3 localUp)
     {
         this.mesh = mesh;
         this.resolution = resolution;
         this.localUp = localUp;
+        this.shapeGenerator = shapeGenerator;
 
         axisA = new Vector3(localUp.y, localUp.z, localUp.x);
         axisB = Vector3.Cross(localUp, axisA);
@@ -32,10 +35,11 @@ public class Terrainface
         {
             for (int x = 0; x < resolution; x++)
             {
-                int i = x * y * resolution;
+                int i = x + y * resolution;
                 Vector2 percent = new Vector2(x, y) / (resolution - 1);
                 Vector3 pointOnCube = localUp + (percent.x - .5f) * 2 * axisA + (percent.y - .5f) * 2 * axisB;
-                vertices[i] = pointOnCube;
+                Vector3 pointOnSphere = pointOnCube.normalized;
+                vertices[i] = shapeGenerator.CalculatePointOnPlanet(pointOnSphere);
 
                 // make a quad by assigning 2 triangles that are not on the edge of the plane
                 if (x != resolution - 1 && y != resolution - 1)
