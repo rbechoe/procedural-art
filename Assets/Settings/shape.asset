@@ -28,9 +28,9 @@ MonoBehaviour:
     useFirstLayerMask: 1
     noiseSettings:
       strength: 6
-      numLayers: 5
+      numLayers: 6
       baseRoughness: 1.09
       roughness: 1.78
       persistence: 0.62
-      center: {x: 3.91, y: 0, z: 3.9}
+      center: {x: 3.96, y: 0, z: 3.9}
       minValue: 1.4
