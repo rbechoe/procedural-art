@@ -130,10 +130,10 @@ MonoBehaviour:
         center: {x: 0, y: 0, z: 0}
         minValue: 0
         weightMultiplier: 0.8
-    noiseOffset: -0.3
-    noiseStrength: 0.03
-    blendAmount: 0.219
-  emissionStrength: 0
+    noiseOffset: 0.21
+    noiseStrength: 0.05
+    blendAmount: 0.043
+  emissionStrength: 0.021714583
   oceanColor:
     serializedVersion: 2
     key0: {r: 0.0752773, g: 0, b: 0.5660378, a: 1}
