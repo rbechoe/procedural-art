@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 63.537292, g: 333.73254, b: 1591.8906, a: 1}
+  m_IndirectSpecularColor: {r: 63.535522, g: 333.73694, b: 1591.8887, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1237,13 +1237,24 @@ MonoBehaviour:
   tintBalancer: 1
   minValBalancer: 0.25
   maxTint: 0.9
-  baseRadius: 3.5
+  baseRadius: 3
   enableAudio: 1
   recordMic: 0
   micNormalizer: 2
   stereoSamples: []
   micSamples: []
-  rmsMultiplier: 10
+  rmsMultiplier: 20
+  stereoMultiplier: 1
+  currentRms: 0
+  rmsValueMic: 0
+  rmsValueStereo: 0
+  subBass: 0
+  bass: 0
+  lowMidrange: 0
+  midrange: 0
+  upperMidrange: 0
+  presence: 0
+  brilliance: 0
 --- !u!4 &1221543054
 Transform:
   m_ObjectHideFlags: 0

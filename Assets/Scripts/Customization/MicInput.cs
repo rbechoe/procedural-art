@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class MicInput : MonoBehaviour
 {
-    void Start()
+    void Awake()
     {
         var device = Microphone.devices[0];
 
