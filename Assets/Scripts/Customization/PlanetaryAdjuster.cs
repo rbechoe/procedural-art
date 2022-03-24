@@ -67,9 +67,20 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
             planet.colorSettings.emissionStrength = emissiveValue * emissiveValue;
             planet.colorSettings.biomeColorSettings.biomes[1].tintPercent = tint;
             planet.shapeSettings.noiseLayers[0].noiseSettings.simpleNoiseSettings.minValue = tint * minValBalancer;
+
+            // x
             planet.shapeSettings.noiseLayers[0].noiseSettings.simpleNoiseSettings.center += new Vector3(emissiveValue, 0, 0) * 0.1f;
+            if (planet.shapeSettings.noiseLayers[0].noiseSettings.simpleNoiseSettings.center.x > 360)
+                planet.shapeSettings.noiseLayers[0].noiseSettings.simpleNoiseSettings.center = Vector3.zero;
+            // y
             planet.shapeSettings.noiseLayers[1].noiseSettings.simpleNoiseSettings.center += new Vector3(0, emissiveValue, 0) * 0.01f;
+            if (planet.shapeSettings.noiseLayers[1].noiseSettings.simpleNoiseSettings.center.y > 360)
+                planet.shapeSettings.noiseLayers[1].noiseSettings.simpleNoiseSettings.center = Vector3.zero;
+            // z
             planet.shapeSettings.noiseLayers[2].noiseSettings.ridgidNoiseSettings.center += new Vector3(0, 0, emissiveValue) * 0.001f;
+            if (planet.shapeSettings.noiseLayers[2].noiseSettings.ridgidNoiseSettings.center.z > 360)
+                planet.shapeSettings.noiseLayers[2].noiseSettings.ridgidNoiseSettings.center = Vector3.zero;
+
             planet.shapeSettings.planetRadius = baseRadius + tint;
             planet.GeneratePlanet();
         }
