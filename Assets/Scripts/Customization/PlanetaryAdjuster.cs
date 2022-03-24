@@ -7,8 +7,12 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
 {
     [Header("Planet settings")]
     public List<Planet> planets = new List<Planet>();
-    public float emissiveValue;
-    public float rotationSpeed = 1;
+    public float tintBalancer = 1f;
+    public float minValBalancer = 0.25f;
+    public float maxTint = 0.9f;
+    public float baseRadius = 3.5f;
+    private float emissiveValue;
+    private float rotationSpeed = 1;
     private float rangeMultiplier = 0;
     private float yRot, zRot;
 
@@ -56,12 +60,17 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
 
     private void FixedUpdate()
     {
+        // adjust extremely specific planet settings for the best visualization experience
         foreach(Planet planet in planets)
         {
+            float tint = Mathf.Clamp(emissiveValue * tintBalancer, 0, maxTint);
             planet.colorSettings.emissionStrength = emissiveValue * emissiveValue;
+            planet.colorSettings.biomeColorSettings.biomes[1].tintPercent = tint;
+            planet.shapeSettings.noiseLayers[0].noiseSettings.simpleNoiseSettings.minValue = tint * minValBalancer;
             planet.shapeSettings.noiseLayers[0].noiseSettings.simpleNoiseSettings.center += new Vector3(emissiveValue, 0, 0) * 0.1f;
             planet.shapeSettings.noiseLayers[1].noiseSettings.simpleNoiseSettings.center += new Vector3(0, emissiveValue, 0) * 0.01f;
             planet.shapeSettings.noiseLayers[2].noiseSettings.ridgidNoiseSettings.center += new Vector3(0, 0, emissiveValue) * 0.001f;
+            planet.shapeSettings.planetRadius = baseRadius + tint;
             planet.GeneratePlanet();
         }
     }
