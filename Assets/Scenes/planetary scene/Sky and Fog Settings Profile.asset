@@ -95,7 +95,7 @@ MonoBehaviour:
     m_OverrideState: 1
     m_Value: {fileID: 8900000, guid: 09999639e73bcd64abda22253af612d8, type: 3}
   distortionMode:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 0
   flowmap:
     m_OverrideState: 1
@@ -109,14 +109,14 @@ MonoBehaviour:
       mode: 3
       customValue: 0
       additiveValue: 0
-      multiplyValue: 2.77
+      multiplyValue: 45.4
   scrollSpeed:
     m_OverrideState: 1
     m_Value:
       mode: 3
       customValue: 100
       additiveValue: 0
-      multiplyValue: 12.62
+      multiplyValue: 14.68
   enableBackplate:
     m_OverrideState: 0
     m_Value: 0

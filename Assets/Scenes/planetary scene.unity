@@ -840,7 +840,7 @@ Light:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1186759116}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
@@ -1238,10 +1238,12 @@ MonoBehaviour:
   minValBalancer: 0.25
   maxTint: 0.9
   baseRadius: 3.5
-  enableAudio: 0
-  recordMic: 1
-  samples: []
-  rmsMultiplier: 20
+  enableAudio: 1
+  recordMic: 0
+  micNormalizer: 2
+  stereoSamples: []
+  micSamples: []
+  rmsMultiplier: 10
 --- !u!4 &1221543054
 Transform:
   m_ObjectHideFlags: 0

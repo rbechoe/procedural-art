@@ -66,15 +66,18 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
             rotationSpeed = Mathf.Clamp(rotationSpeed, 0, 15);
         }
 
+        AnalyzeMic();
+        AnalyzeSound();
+
         if (enableAudio)
         {
             if (recordMic)
             {
-                AnalyzeMic();
+                rmsValue = Mathf.Sqrt(CalculateRMS(micSamples) / sampleSize) * rmsMultiplier / micNormalizer;
             }
             else
             {
-                AnalyzeSound();
+                rmsValue = Mathf.Sqrt(CalculateRMS(stereoSamples) / sampleSize) * rmsMultiplier;
             }
         }
 
@@ -116,7 +119,6 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
     {
         stereoSamples = GetSpectrumData();
 
-        rmsValue = Mathf.Sqrt(CalculateRMS(stereoSamples) / sampleSize) * rmsMultiplier / micNormalizer;
     }
 
     private void AnalyzeMic()
@@ -129,7 +131,6 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
         }
         record.GetData(micSamples, micPosition);
 
-        rmsValue = Mathf.Sqrt(CalculateRMS(micSamples) / sampleSize) * rmsMultiplier;
     }
 
     private float CalculateRMS(float[] samples)
