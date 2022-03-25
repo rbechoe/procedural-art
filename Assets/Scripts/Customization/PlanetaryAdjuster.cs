@@ -20,12 +20,12 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
     public bool enableAudio;
     public bool recordMic;
     public bool enableEpilepticEpisode;
+    public float micCd;
     public float micNormalizer = 5f;
     public float[] stereoSamples;
     public float[] micSamples;
     [Range(0, 100)]
     public float rmsMultiplier = 10f;
-    public float stereoMultiplier = 5f;
     public float seizureTreshold = 0.4f;
     private int sampleSize = 128;
     private float rangeCd = 1f;
@@ -35,6 +35,13 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
     public float currentRms; // used for basic calcs and rotation
     public float rmsValueMic; // used for all for mic
     public float rmsValueStereo; // used for size
+
+    [Header("Balancers")]
+    public float micSensitivity = 0.3f;
+    public float baseMultiplier = 0.5f;
+    public float peakBass;
+    public float stereoMultiplier = 5f;
+
     [Header("Readable Spectrum")]
     public float subBass; // emission
     public float bass; // color
@@ -44,6 +51,7 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
     public float presence; // flip emission (after fixing land gradient)
     public float brilliance; // tint
     private float emissionMultiplier = 1;
+    private Color chosenCol;
 
     private void Start()
     {
@@ -55,6 +63,7 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
 
     private void Update()
     {
+        // planet orientation
         rangeCd -= Time.deltaTime * 2f;
         yRot += rotationSpeed * Time.deltaTime * 5;
         zRot += rotationSpeed * Time.deltaTime * 5;
@@ -79,6 +88,22 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
             rotationSpeed = Mathf.Clamp(rotationSpeed, 0, 15);
         }
 
+        // smart microphone calculations
+        if (rmsValueMic > micSensitivity)
+        {
+            micCd = 3;
+        }
+
+        if (micCd > 0)
+        {
+            recordMic = true;
+            micCd -= Time.deltaTime;
+        }
+        else
+        {
+            recordMic = false;
+        }
+
         if (enableAudio)
         {
             if (recordMic)
@@ -91,10 +116,15 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
             }
         }
 
+        // update planets
         foreach (Planet planet in planets)
         {
             planet.transform.eulerAngles = new Vector3(0, yRot, zRot);
         }
+
+        // smooth peak values
+        if (peakBass > 0.25f) peakBass -= Time.deltaTime;
+        stereoMultiplier = baseMultiplier / peakBass;
     }
 
     private void FixedUpdate()
@@ -116,6 +146,7 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
         }
     }
 
+    // spread audio spectrum over 7 bands
     private void AnalyzeSound()
     {
         stereoSamples = GetSpectrumData();
@@ -149,6 +180,8 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
         presence *= stereoMultiplier;
         brilliance *= brilliance * stereoMultiplier;
 
+        if (peakBass < subBass) peakBass = subBass;
+
         if (enableEpilepticEpisode)
             emissionMultiplier = (presence > seizureTreshold) ? -1f : 1f; // flip emission
         else
@@ -157,6 +190,7 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
         rmsValueStereo = Mathf.Sqrt(CalculateRMS(stereoSamples) / sampleSize) * rmsMultiplier;
     }
 
+    // translate all mic data to simplefied values
     private void AnalyzeMic()
     {
         micSamples = new float[sampleSize];
@@ -170,6 +204,7 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
         rmsValueMic = Mathf.Sqrt(CalculateRMS(micSamples) / sampleSize) * rmsMultiplier / micNormalizer;
     }
 
+    // calculate the rms
     private float CalculateRMS(float[] samples)
     {
         float sum = 0;
@@ -181,6 +216,7 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
         return sum;
     }
 
+    // adjust the planet according to the data from the mic
     private void PlanetaryMic()
     {
         // adjust extremely specific planet settings for the best visualization experience
@@ -204,12 +240,12 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
             if (planet.shapeSettings.noiseLayers[2].noiseSettings.ridgidNoiseSettings.center.z > 360)
                 planet.shapeSettings.noiseLayers[2].noiseSettings.ridgidNoiseSettings.center = Vector3.zero;
 
-            planet.shapeSettings.planetRadius = baseRadius + rmsValueStereo;
+            planet.shapeSettings.planetRadius = baseRadius + rmsValueMic;
             planet.GeneratePlanet();
         }
     }
 
-    public Color chosenCol;
+    // adjust the planet based on the audio spectrum from the system
     private void PlanteraryStereo()
     {
         // adjust extremely specific planet settings for the best visualization experience
