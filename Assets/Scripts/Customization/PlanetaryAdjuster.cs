@@ -19,6 +19,8 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
     public Gradient emissionColor;
     public bool enableAudio;
     public bool recordMic;
+    [Tooltip("Automatically detect microphone input")]
+    public bool allowSmartSwitch;
     public bool enableEpilepticEpisode;
     public float micCd;
     public float micNormalizer = 5f;
@@ -37,6 +39,7 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
     public float rmsValueStereo; // used for size
 
     [Header("Balancers")]
+    [Tooltip("Sensitivity for automatic detection")]
     public float micSensitivity = 0.3f;
     public float baseMultiplier = 0.5f;
     public float peakBass;
@@ -89,19 +92,22 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
         }
 
         // smart microphone calculations
-        if (rmsValueMic > micSensitivity)
+        if (allowSmartSwitch)
         {
-            micCd = 3;
-        }
+            if (rmsValueMic > micSensitivity)
+            {
+                micCd = 3;
+            }
 
-        if (micCd > 0)
-        {
-            recordMic = true;
-            micCd -= Time.deltaTime;
-        }
-        else
-        {
-            recordMic = false;
+            if (micCd > 0)
+            {
+                recordMic = true;
+                micCd -= Time.deltaTime;
+            }
+            else
+            {
+                recordMic = false;
+            }
         }
 
         if (enableAudio)
