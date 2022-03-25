@@ -40,7 +40,7 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
     public float lowMidrange; // layer 1
     public float midrange; // layer 2
     public float upperMidrange; // layer 3
-    public float presence; // 
+    public float presence; // flip emission (after fixing land gradient)
     public float brilliance; // tint
 
     private void Start()
