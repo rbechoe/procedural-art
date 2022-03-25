@@ -7,7 +7,6 @@ public class ColorGenerator
     private ColorSettings settings;
 
     private Texture2D texture;
-    private Texture2D landTexture;
     private const int textureResolution = 64;
     private const int emissionMultiplier = 512;
     INoiseFilter biomeNoiseFilter;
@@ -19,7 +18,6 @@ public class ColorGenerator
         if (texture == null || texture.height != settings.biomeColorSettings.biomes.Length)
         {
             texture = new Texture2D(textureResolution * 2, settings.biomeColorSettings.biomes.Length, TextureFormat.RGBA32, false);
-            landTexture = new Texture2D(textureResolution * 2, settings.biomeColorSettings.biomes.Length, TextureFormat.RGBA32, false);
         }
 
         biomeNoiseFilter = NoiseFilterFactory.CreateNoiseFilter(settings.biomeColorSettings.noise);
@@ -52,7 +50,6 @@ public class ColorGenerator
     public void Updatecolors()
     {
         Color[] colors = new Color[texture.width * texture.height];
-        Color[] landColors = new Color[landTexture.width * landTexture.height];
 
         int colorIndex = 0;
         foreach (var biome in settings.biomeColorSettings.biomes)
@@ -68,22 +65,17 @@ public class ColorGenerator
                 else
                 {
                     gradientCol = biome.gradient.Evaluate((i - textureResolution) / (textureResolution - 1f));
-                    landGradient = Color.white;
                 }
 
                 Color tintCol = biome.tint;
                 colors[colorIndex] = gradientCol * (1 - biome.tintPercent) + tintCol * biome.tintPercent;
-                landColors[colorIndex] = landGradient;
                 colorIndex++;
             }
         }
 
         texture.SetPixels(colors);
-        landTexture.SetPixels(colors);
         texture.Apply();
-        landTexture.Apply();
         settings.planetMaterial.SetTexture("_PlanetTexture", texture);
-        settings.planetMaterial.SetTexture("_LandTexture", landTexture);
         settings.planetMaterial.SetFloat("_EmissionStrength", (settings.emissionStrength * emissionMultiplier));
         settings.planetMaterial.SetColor("_EmissionColor", settings.emissionColor);
     }

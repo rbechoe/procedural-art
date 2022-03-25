@@ -19,15 +19,16 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
     public Gradient emissionColor;
     public bool enableAudio;
     public bool recordMic;
+    public bool enableEpilepticEpisode;
     public float micNormalizer = 5f;
     public float[] stereoSamples;
     public float[] micSamples;
     [Range(0, 100)]
     public float rmsMultiplier = 10f;
     public float stereoMultiplier = 5f;
+    public float seizureTreshold = 0.4f;
     private int sampleSize = 128;
     private float rangeCd = 1f;
-    private MicInput micInput;
     private AudioClip record;
 
     [Header("Readable RMS")]
@@ -42,10 +43,10 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
     public float upperMidrange; // layer 3
     public float presence; // flip emission (after fixing land gradient)
     public float brilliance; // tint
+    private float emissionMultiplier = 1;
 
     private void Start()
     {
-        micInput = gameObject.GetComponent<MicInput>();
         record = gameObject.GetComponent<AudioSource>().clip;
         sampleSize = WasapiAudioSource.SpectrumSize;
         stereoSamples = new float[sampleSize];
@@ -145,8 +146,13 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
         lowMidrange *= lowMidrange * stereoMultiplier;
         midrange *= midrange * stereoMultiplier;
         upperMidrange *= upperMidrange * stereoMultiplier;
-        presence *= presence * stereoMultiplier;
+        presence *= stereoMultiplier;
         brilliance *= brilliance * stereoMultiplier;
+
+        if (enableEpilepticEpisode)
+            emissionMultiplier = (presence > seizureTreshold) ? -1f : 1f; // flip emission
+        else
+            emissionMultiplier = 1;
 
         rmsValueStereo = Mathf.Sqrt(CalculateRMS(stereoSamples) / sampleSize) * rmsMultiplier;
     }
@@ -210,7 +216,7 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
         foreach (Planet planet in planets)
         {
             float tint = Mathf.Clamp(brilliance * tintBalancer, 0, maxTint);
-            planet.colorSettings.emissionStrength = subBass * subBass;
+            planet.colorSettings.emissionStrength = subBass * subBass * emissionMultiplier;
             chosenCol = emissionColor.Evaluate(bass * 2);
             planet.colorSettings.emissionColor = chosenCol;
             planet.colorSettings.biomeColorSettings.biomes[1].tintPercent = tint;
