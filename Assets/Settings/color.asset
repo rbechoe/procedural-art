@@ -78,7 +78,7 @@ MonoBehaviour:
         m_NumAlphaKeys: 2
       tint: {r: 0, g: 0, b: 0, a: 0}
       startHeight: 0
-      tintPercent: 0.9
+      tintPercent: 0.0010577859
     - gradient:
         serializedVersion: 2
         key0: {r: 0.5322179, g: 0.9811321, b: 0.9453052, a: 1}
@@ -133,7 +133,7 @@ MonoBehaviour:
     noiseOffset: 0
     noiseStrength: 0.05
     blendAmount: 0.079
-  emissionStrength: 0
+  emissionStrength: 0.2
   oceanColor:
     serializedVersion: 2
     key0: {r: 0.0752773, g: 0, b: 0.5660378, a: 1}
@@ -163,3 +163,4 @@ MonoBehaviour:
     m_Mode: 0
     m_NumColorKeys: 3
     m_NumAlphaKeys: 2
+  emissionColor: {r: 0.9911299, g: 0.38121277, b: 0.009199422, a: 1}

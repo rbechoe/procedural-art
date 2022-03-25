@@ -9,6 +9,7 @@ public class ColorSettings : ScriptableObject
     public BiomeColorSettings biomeColorSettings;
     public float emissionStrength;
     public Gradient oceanColor;
+    public Color emissionColor;
 
     [System.Serializable]
     public class BiomeColorSettings

@@ -8,7 +8,7 @@ public class ColorGenerator
 
     private Texture2D texture;
     private const int textureResolution = 64;
-    private const int emissionMultiplier = 8192;
+    private const int emissionMultiplier = 512;
     INoiseFilter biomeNoiseFilter;
 
     public void UpdateSettings(ColorSettings colorSettings)
@@ -76,5 +76,6 @@ public class ColorGenerator
         texture.Apply();
         settings.planetMaterial.SetTexture("_PlanetTexture", texture);
         settings.planetMaterial.SetFloat("_EmissionStrength", (settings.emissionStrength * emissionMultiplier));
+        settings.planetMaterial.SetColor("_EmissionColor", settings.emissionColor);
     }
 }

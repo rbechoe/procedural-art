@@ -16,6 +16,7 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
     private float rangeMultiplier = 0;
 
     [Header("Audio settings")]
+    public Gradient emissionColor;
     public bool enableAudio;
     public bool recordMic;
     public float micNormalizer = 5f;
@@ -29,10 +30,11 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
     private MicInput micInput;
     private AudioClip record;
 
-    [Header("Readable values")]
+    [Header("Readable RMS")]
     public float currentRms; // used for basic calcs and rotation
     public float rmsValueMic; // used for all for mic
     public float rmsValueStereo; // used for size
+    [Header("Readable Spectrum")]
     public float subBass; // emission
     public float bass; // color
     public float lowMidrange; // layer 1
@@ -96,6 +98,8 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
 
     private void FixedUpdate()
     {
+        if (!enableAudio) return;
+
         // fill audio spectrum
         AnalyzeMic();
         AnalyzeSound();
@@ -199,6 +203,7 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
         }
     }
 
+    public Color chosenCol;
     private void PlanteraryStereo()
     {
         // adjust extremely specific planet settings for the best visualization experience
@@ -206,6 +211,8 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
         {
             float tint = Mathf.Clamp(brilliance * tintBalancer, 0, maxTint);
             planet.colorSettings.emissionStrength = subBass * subBass;
+            chosenCol = emissionColor.Evaluate(bass * 2);
+            planet.colorSettings.emissionColor = chosenCol;
             planet.colorSettings.biomeColorSettings.biomes[1].tintPercent = tint;
             planet.shapeSettings.noiseLayers[0].noiseSettings.simpleNoiseSettings.minValue = tint * minValBalancer;
 
