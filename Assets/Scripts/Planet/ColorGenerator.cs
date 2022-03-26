@@ -8,7 +8,7 @@ public class ColorGenerator
 
     private Texture2D texture;
     private const int textureResolution = 64;
-    private const int emissionMultiplier = 512;
+    private const int emissionMultiplier = 64;
     INoiseFilter biomeNoiseFilter;
 
     public void UpdateSettings(ColorSettings colorSettings)

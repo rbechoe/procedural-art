@@ -84,10 +84,11 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
             rangeCd = (1 - rangeMultiplier) * 0.1f;
         }
 
-        if (rotationSpeed > 1) rotationSpeed -= Time.deltaTime * 2;
+        float newSpeed = Mathf.Pow(currentRms, 5);
+        if (rotationSpeed > newSpeed) rotationSpeed -= Time.deltaTime * 2;
         else
         {
-            rotationSpeed += Mathf.Pow(currentRms, 5);
+            rotationSpeed += newSpeed;
             rotationSpeed = Mathf.Clamp(rotationSpeed, 0, 15);
         }
 
@@ -108,6 +109,16 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
             {
                 recordMic = false;
             }
+        }
+
+        // hotkeys
+        if (Input.GetKeyUp(KeyCode.M))
+        {
+            allowSmartSwitch = !allowSmartSwitch;
+        }
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            Application.Quit();
         }
 
         if (enableAudio)
@@ -258,7 +269,7 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
         foreach (Planet planet in planets)
         {
             float tint = Mathf.Clamp(brilliance * tintBalancer, 0, maxTint);
-            planet.colorSettings.emissionStrength = subBass * subBass * emissionMultiplier;
+            planet.colorSettings.emissionStrength = subBass * emissionMultiplier;
             chosenCol = emissionColor.Evaluate(bass * 2);
             planet.colorSettings.emissionColor = chosenCol;
             planet.colorSettings.biomeColorSettings.biomes[1].tintPercent = tint;
