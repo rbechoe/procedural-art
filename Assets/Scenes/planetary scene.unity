@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 63.4601, g: 332.5774, b: 1594.1924, a: 1}
+  m_IndirectSpecularColor: {r: 63.45906, g: 332.57495, b: 1594.1885, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1269,7 +1269,7 @@ MonoBehaviour:
     m_NumAlphaKeys: 2
   enableAudio: 1
   recordMic: 0
-  allowSmartSwitch: 1
+  allowSmartSwitch: 0
   enableEpilepticEpisode: 1
   micCd: 0
   micNormalizer: 1
