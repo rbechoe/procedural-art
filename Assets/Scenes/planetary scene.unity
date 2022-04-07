@@ -1269,7 +1269,7 @@ MonoBehaviour:
     m_NumAlphaKeys: 2
   enableAudio: 1
   recordMic: 0
-  allowSmartSwitch: 0
+  allowSmartSwitch: 1
   enableEpilepticEpisode: 1
   micCd: 0
   micNormalizer: 1

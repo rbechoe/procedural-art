@@ -115,6 +115,11 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
         if (Input.GetKeyUp(KeyCode.M))
         {
             allowSmartSwitch = !allowSmartSwitch;
+            if (!allowSmartSwitch)
+            {
+                micCd = 0;
+                recordMic = false;
+            }
         }
         if (Input.GetKey(KeyCode.Escape))
         {
