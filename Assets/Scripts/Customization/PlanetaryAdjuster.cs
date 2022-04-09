@@ -18,14 +18,8 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
     [Header("Audio settings")]
     public Gradient emissionColor;
     public bool enableAudio;
-    public bool recordMic;
-    [Tooltip("Automatically detect microphone input")]
-    public bool allowSmartSwitch;
     public bool enableEpilepticEpisode;
-    public float micCd;
-    public float micNormalizer = 5f;
     public float[] stereoSamples;
-    public float[] micSamples;
     [Range(0, 100)]
     public float rmsMultiplier = 10f;
     public float seizureTreshold = 0.4f;
@@ -35,12 +29,9 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
 
     [Header("Readable RMS")]
     public float currentRms; // used for basic calcs and rotation
-    public float rmsValueMic; // used for all for mic
     public float rmsValueStereo; // used for size
 
     [Header("Balancers")]
-    [Tooltip("Sensitivity for automatic detection")]
-    public float micSensitivity = 0.3f;
     public float baseMultiplier = 0.5f;
     public float peakBass;
     public float stereoMultiplier = 5f;
@@ -61,7 +52,6 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
         record = gameObject.GetComponent<AudioSource>().clip;
         sampleSize = WasapiAudioSource.SpectrumSize;
         stereoSamples = new float[sampleSize];
-        micSamples = new float[sampleSize];
     }
 
     private void Update()
@@ -92,50 +82,14 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
             rotationSpeed = Mathf.Clamp(rotationSpeed, 0, 15);
         }
 
-        // smart microphone calculations
-        if (allowSmartSwitch)
-        {
-            if (rmsValueMic > micSensitivity)
-            {
-                micCd = 3;
-            }
-
-            if (micCd > 0)
-            {
-                recordMic = true;
-                micCd -= Time.deltaTime;
-            }
-            else
-            {
-                recordMic = false;
-            }
-        }
-
         // hotkeys
         if (Input.GetKeyUp(KeyCode.M))
         {
-            allowSmartSwitch = !allowSmartSwitch;
-            if (!allowSmartSwitch)
-            {
-                micCd = 0;
-                recordMic = false;
-            }
+            enableEpilepticEpisode = !enableEpilepticEpisode;
         }
         if (Input.GetKey(KeyCode.Escape))
         {
             Application.Quit();
-        }
-
-        if (enableAudio)
-        {
-            if (recordMic)
-            {
-                currentRms = rmsValueMic;
-            }
-            else
-            {
-                currentRms = rmsValueStereo;
-            }
         }
 
         // update planets
@@ -147,25 +101,14 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
         // smooth peak values
         if (peakBass > 0.25f) peakBass -= Time.deltaTime;
         stereoMultiplier = baseMultiplier / peakBass;
+
+        currentRms = rmsValueStereo;
     }
 
     private void FixedUpdate()
     {
-        if (!enableAudio) return;
-
-        // fill audio spectrum
-        AnalyzeMic();
         AnalyzeSound();
-
-        // visualize based on spectrum
-        if (recordMic)
-        {
-            PlanetaryMic();
-        }
-        else
-        {
-            PlanteraryStereo();
-        }
+        PlanteraryStereo();
     }
 
     // spread audio spectrum over 7 bands
@@ -212,20 +155,6 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
         rmsValueStereo = Mathf.Sqrt(CalculateRMS(stereoSamples) / sampleSize) * rmsMultiplier;
     }
 
-    // translate all mic data to simplefied values
-    private void AnalyzeMic()
-    {
-        micSamples = new float[sampleSize];
-        int micPosition = Microphone.GetPosition(null) - (sampleSize + 1);
-        if (micPosition < 0)
-        {
-            return;
-        }
-        record.GetData(micSamples, micPosition);
-
-        rmsValueMic = Mathf.Sqrt(CalculateRMS(micSamples) / sampleSize) * rmsMultiplier / micNormalizer;
-    }
-
     // calculate the rms
     private float CalculateRMS(float[] samples)
     {
@@ -236,35 +165,6 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
         }
 
         return sum;
-    }
-
-    // adjust the planet according to the data from the mic
-    private void PlanetaryMic()
-    {
-        // adjust extremely specific planet settings for the best visualization experience
-        foreach (Planet planet in planets)
-        {
-            float tint = Mathf.Clamp(rangeMultiplier * tintBalancer, 0, maxTint);
-            planet.colorSettings.emissionStrength = rangeMultiplier * rangeMultiplier;
-            planet.colorSettings.biomeColorSettings.biomes[1].tintPercent = tint;
-            planet.shapeSettings.noiseLayers[0].noiseSettings.simpleNoiseSettings.minValue = tint * minValBalancer;
-
-            // x
-            planet.shapeSettings.noiseLayers[0].noiseSettings.simpleNoiseSettings.center += new Vector3(rangeMultiplier, 0, 0) * 0.1f;
-            if (planet.shapeSettings.noiseLayers[0].noiseSettings.simpleNoiseSettings.center.x > 360)
-                planet.shapeSettings.noiseLayers[0].noiseSettings.simpleNoiseSettings.center = Vector3.zero;
-            // y
-            planet.shapeSettings.noiseLayers[1].noiseSettings.simpleNoiseSettings.center += new Vector3(0, rangeMultiplier, 0) * 0.01f;
-            if (planet.shapeSettings.noiseLayers[1].noiseSettings.simpleNoiseSettings.center.y > 360)
-                planet.shapeSettings.noiseLayers[1].noiseSettings.simpleNoiseSettings.center = Vector3.zero;
-            // z
-            planet.shapeSettings.noiseLayers[2].noiseSettings.ridgidNoiseSettings.center += new Vector3(0, 0, rangeMultiplier) * 0.001f;
-            if (planet.shapeSettings.noiseLayers[2].noiseSettings.ridgidNoiseSettings.center.z > 360)
-                planet.shapeSettings.noiseLayers[2].noiseSettings.ridgidNoiseSettings.center = Vector3.zero;
-
-            planet.shapeSettings.planetRadius = baseRadius + rmsValueMic;
-            planet.GeneratePlanet();
-        }
     }
 
     // adjust the planet based on the audio spectrum from the system
