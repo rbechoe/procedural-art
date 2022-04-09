@@ -138,13 +138,13 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
             brilliance      += stereoSamples[i + frequencyBand * 7];
         }
 
-        subBass *= subBass * stereoMultiplier;
-        bass *= bass * stereoMultiplier;
-        lowMidrange *= lowMidrange * stereoMultiplier;
-        midrange *= midrange * stereoMultiplier;
-        upperMidrange *= upperMidrange * stereoMultiplier;
+        subBass *= stereoMultiplier;
+        bass *= stereoMultiplier;
+        lowMidrange *= stereoMultiplier;
+        midrange *= stereoMultiplier;
+        upperMidrange *= stereoMultiplier;
         presence *= stereoMultiplier;
-        brilliance *= brilliance * stereoMultiplier;
+        brilliance *= stereoMultiplier;
 
         if (peakBass < subBass) peakBass = subBass;
 
@@ -186,15 +186,15 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
             planet.shapeSettings.noiseLayers[0].noiseSettings.simpleNoiseSettings.minValue = tint * minValBalancer;
 
             // x
-            planet.shapeSettings.noiseLayers[0].noiseSettings.simpleNoiseSettings.center += new Vector3(lowMidrange, 0, 0) * 0.1f;
+            planet.shapeSettings.noiseLayers[0].noiseSettings.simpleNoiseSettings.center += new Vector3(lowMidrange + midrange + upperMidrange, 0, 0) * 0.1f;
             if (planet.shapeSettings.noiseLayers[0].noiseSettings.simpleNoiseSettings.center.x > 360)
                 planet.shapeSettings.noiseLayers[0].noiseSettings.simpleNoiseSettings.center = Vector3.zero;
             // y
-            planet.shapeSettings.noiseLayers[1].noiseSettings.simpleNoiseSettings.center += new Vector3(0, midrange, 0) * 0.01f;
+            planet.shapeSettings.noiseLayers[1].noiseSettings.simpleNoiseSettings.center += new Vector3(0, midrange + upperMidrange, 0) * 0.1f;
             if (planet.shapeSettings.noiseLayers[1].noiseSettings.simpleNoiseSettings.center.y > 360)
                 planet.shapeSettings.noiseLayers[1].noiseSettings.simpleNoiseSettings.center = Vector3.zero;
             // z
-            planet.shapeSettings.noiseLayers[2].noiseSettings.ridgidNoiseSettings.center += new Vector3(0, 0, upperMidrange) * 0.001f;
+            planet.shapeSettings.noiseLayers[2].noiseSettings.ridgidNoiseSettings.center += new Vector3(0, 0, upperMidrange) * 0.1f;
             if (planet.shapeSettings.noiseLayers[2].noiseSettings.ridgidNoiseSettings.center.z > 360)
                 planet.shapeSettings.noiseLayers[2].noiseSettings.ridgidNoiseSettings.center = Vector3.zero;
 

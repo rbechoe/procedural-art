@@ -1270,7 +1270,7 @@ MonoBehaviour:
   enableEpilepticEpisode: 1
   stereoSamples: []
   rmsMultiplier: 20
-  seizureTreshold: 0.29
+  seizureTreshold: 0.5
   currentRms: 0
   rmsValueStereo: 0
   baseMultiplier: 0.5
