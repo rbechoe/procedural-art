@@ -1236,6 +1236,7 @@ MonoBehaviour:
   minValBalancer: 0.25
   maxTint: 0.9
   baseRadius: 3
+  volume: {fileID: 122944552}
   emissionColor:
     serializedVersion: 2
     key0: {r: 1, g: 0.38475227, b: 0, a: 1}

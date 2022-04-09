@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Assets.WasapiAudio.Scripts.Unity;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.HighDefinition;
 
 public class PlanetaryAdjuster : AudioVisualizationEffect
 {
@@ -16,6 +18,7 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
     private float rangeMultiplier = 0;
 
     [Header("Audio settings")]
+    public Volume volume;
     public Gradient emissionColor;
     public bool enableAudio;
     public bool enableEpilepticEpisode;
@@ -25,7 +28,6 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
     public float seizureTreshold = 0.4f;
     private int sampleSize = 128;
     private float rangeCd = 1f;
-    private AudioClip record;
 
     [Header("Readable RMS")]
     public float currentRms; // used for basic calcs and rotation
@@ -49,7 +51,6 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
 
     private void Start()
     {
-        record = gameObject.GetComponent<AudioSource>().clip;
         sampleSize = WasapiAudioSource.SpectrumSize;
         stereoSamples = new float[sampleSize];
     }
@@ -174,9 +175,13 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
         foreach (Planet planet in planets)
         {
             float tint = Mathf.Clamp(brilliance * tintBalancer, 0, maxTint);
-            planet.colorSettings.emissionStrength = subBass * emissionMultiplier;
             chosenCol = emissionColor.Evaluate(bass * 2);
+            Bloom bloom; 
+            volume.profile.TryGet(out bloom);
+            ColorParameter col = new ColorParameter(chosenCol);
+            bloom.tint.SetValue(col);
             planet.colorSettings.emissionColor = chosenCol;
+            planet.colorSettings.emissionStrength = subBass * emissionMultiplier;
             planet.colorSettings.biomeColorSettings.biomes[1].tintPercent = tint;
             planet.shapeSettings.noiseLayers[0].noiseSettings.simpleNoiseSettings.minValue = tint * minValBalancer;
 
