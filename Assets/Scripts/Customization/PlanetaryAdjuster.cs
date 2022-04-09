@@ -31,7 +31,6 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
 
     [Header("Readable RMS")]
     public float currentRms; // used for basic calcs and rotation
-    public float rmsValueStereo; // used for size
 
     [Header("Balancers")]
     public float baseMultiplier = 0.5f;
@@ -102,8 +101,6 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
         // smooth peak values
         if (peakBass > 0.25f) peakBass -= Time.deltaTime;
         stereoMultiplier = baseMultiplier / peakBass;
-
-        currentRms = rmsValueStereo;
     }
 
     private void FixedUpdate()
@@ -153,7 +150,9 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
         else
             emissionMultiplier = 1;
 
-        rmsValueStereo = Mathf.Sqrt(CalculateRMS(stereoSamples) / sampleSize) * rmsMultiplier;
+        currentRms = Mathf.Sqrt(CalculateRMS(stereoSamples) / sampleSize) * rmsMultiplier;
+
+        minValBalancer = 0.1f + currentRms;
     }
 
     // calculate the rms
@@ -199,6 +198,10 @@ public class PlanetaryAdjuster : AudioVisualizationEffect
                 planet.shapeSettings.noiseLayers[2].noiseSettings.ridgidNoiseSettings.center = Vector3.zero;
 
             planet.shapeSettings.planetRadius = baseRadius + tint;
+            ChromaticAberration chrom;
+            volume.profile.TryGet(out chrom);
+            FloatParameter intensity = new FloatParameter(tint);
+            chrom.intensity.SetValue(intensity);
             planet.GeneratePlanet();
         }
     }
